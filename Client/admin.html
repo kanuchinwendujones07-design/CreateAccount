@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amplyfi | Admin Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+        body{background:#0f172a; color:#fff; padding: 20px; min-height: 100vh;}
+        .container{max-width: 1100px; margin: 0 auto;}
+        
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1{font-weight: 800; color: #4f46e5; font-size: 28px;}
+        
+        .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: #1e293b; padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .stat-card h3 { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card p { font-size: 24px; font-weight: 800; margin-top: 5px; color: #4f46e5; }
+
+        .admin-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        .card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); overflow-x: auto; }
+        h2 { font-size: 18px; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px; color: #f1f5f9; display: flex; align-items: center; gap: 10px; }
+
+        /* --- ADDED: TASK CREATION FORM STYLES --- */
+        .task-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .task-input { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 8px; color: white; outline: none; font-size: 13px; }
+        .task-input:focus { border-color: #4f46e5; }
+        .btn-add { background: #4f46e5; color: white; grid-column: 1 / -1; padding: 15px; font-size: 14px; margin-top: 10px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; min-width: 600px; }
+        th { text-align: left; color: #64748b; padding: 12px; border-bottom: 1px solid #334155; text-transform: uppercase; font-size: 11px; }
+        td { padding: 15px 12px; border-bottom: 1px solid rgba(255,255,255,0.02); vertical-align: middle; }
+
+        .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.3s; }
+        .btn-approve { background: #22c55e; color: white; }
+        .btn-reject { background: #ef4444; color: white; margin-left: 5px; }
+        .btn-paid { background: #4f46e5; color: white; width: 100%; }
+        
+        #toast {
+            position: fixed; top: 20px; right: 20px; padding: 15px 25px; 
+            background: #1e293b; color: #fff; border-left: 4px solid #4f46e5;
+            border-radius: 8px; box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+            display: none; z-index: 9999; animation: slideIn 0.3s ease-out;
+            font-size: 14px; font-weight: 600;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        #adminLock { display: none; text-align: center; margin-top: 150px; }
+        .empty-msg { text-align: center; padding: 30px; color: #64748b; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div id="toast">Action Successful</div>
+
+    <div id="adminLock">
+        <i class="fas fa-shield-alt" style="font-size: 60px; color: #ef4444; margin-bottom: 20px;"></i>
+        <h1>Access Denied</h1>
+        <p style="color: #94a3b8;">Administrator account required.</p>
+        <button onclick="location.href='login.html'" style="margin-top:20px; padding:10px 20px; background:#4f46e5; color:white; border:none; border-radius:8px; cursor:pointer;">Logout & Re-login</button>
+    </div>
+
+    <div class="container" id="adminContent" style="display: none;">
+        <div class="admin-header">
+            <h1>Admin Control</h1>
+            <button id="adminLogout" style="background:transparent; border:1px solid #ef4444; color:#ef4444; padding:8px 15px; border-radius:8px; cursor:pointer;">Logout</button>
+        </div>
+
+        <div class="card" style="margin-bottom: 30px; border: 1px solid #4f46e5;">
+            <h2><i class="fas fa-plus-circle" style="color:#4f46e5;"></i> Create New Task</h2>
+            <div class="task-form-grid">
+                <input type="text" id="taskTitle" class="task-input" placeholder="Task Title (e.g. WhatsApp Like)">
+                <input type="number" id="taskReward" class="task-input" placeholder="Reward (₦)">
+                <input type="text" id="taskLink" class="task-input" placeholder="Task Link (URL)">
+                <input type="number" id="taskLimit" class="task-input" placeholder="Max Completers (e.g. 100)">
+                <select id="taskIcon" class="task-input">
+                    <option value="fab fa-whatsapp">WhatsApp</option>
+                    <option value="fab fa-instagram">Instagram</option>
+                    <option value="fab fa-facebook">Facebook</option>
+                    <option value="fab fa-twitter">Twitter/X</option>
+                    <option value="fas fa-play">Video/YouTube</option>
+                    <option value="fas fa-globe">Website</option>
+                </select>
+                <button class="btn btn-add" id="addTaskBtn">Publish Task to Users</button>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card"><h3>Total Users</h3><p id="statUsers">0</p></div>
+            <div class="stat-card"><h3>Pending Proofs</h3><p id="statProofs" style="color: #f59e0b;">0</p></div>
+            <div class="stat-card"><h3>Withdrawals</h3><p id="statWithdraws" style="color: #ef4444;">0</p></div>
+        </div>
+
+        <div class="admin-grid">
+            <div class="card">
+                <h2><i class="fas fa-list" style="color:#4f46e5;"></i> Active Tasks</h2>
+                <table>
+                    <thead><tr><th>Task</th><th>Limit</th><th>Action</th></tr></thead>
+                    <tbody id="activeTasksTable"></tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-users" style="color:#9333ea;"></i> User List</h2>
+                <table>
+                    <thead><tr><th>Email</th><th>Joined</th></tr></thead>
+                    <tbody id="userTable"></tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-check-double" style="color:#22c55e;"></i> Task Proofs</h2>
+                <table>
+                    <thead><tr><th>User</th><th>Task</th><th>Proof</th><th>Action</th></tr></thead>
+                    <tbody id="proofTable"></tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-wallet" style="color:#4f46e5;"></i> Withdrawals</h2>
+                <table>
+                    <thead><tr><th>User</th><th>Bank Info</th><th>Amount</th><th>Action</th></tr></thead>
+                    <tbody id="withdrawTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, onValue, remove, set, push, runTransaction } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAP5BADrbyPaeR8WYVzZToWabxeVBDTo5I",
+            authDomain: "client-b83b3.firebaseapp.com",
+            projectId: "client-b83b3",
+            databaseURL: "https://client-b83b3-default-rtdb.firebaseio.com/",
+            appId: "1:653007015347:web:7a43260aab8bc2246f4fc6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        const ADMIN_EMAIL = "kanuchinwendujones07@gmail.com"; 
+
+        function showToast(msg, color="#4f46e5") {
+            const t = document.getElementById("toast");
+            t.innerText = msg;
+            t.style.borderLeftColor = color;
+            t.style.display = "block";
+            setTimeout(() => { t.style.display = "none"; }, 3000);
+        }
+
+        // --- TASK CREATION LOGIC ---
+        document.getElementById("addTaskBtn").onclick = async () => {
+            const title = document.getElementById("taskTitle").value;
+            const reward = parseInt(document.getElementById("taskReward").value);
+            const link = document.getElementById("taskLink").value;
+            const limit = parseInt(document.getElementById("taskLimit").value);
+            const icon = document.getElementById("taskIcon").value;
+
+            if(!title || !reward || !link || !limit) return showToast("Missing Fields", "#ef4444");
+
+            const newTaskRef = push(ref(db, 'activeTasks'));
+            await set(newTaskRef, {
+                title, reward, link, limit, icon,
+                completed: 0,
+                timestamp: Date.now()
+            });
+
+            showToast("Task Published!", "#22c55e");
+            document.getElementById("taskTitle").value = "";
+            document.getElementById("taskReward").value = "";
+            document.getElementById("taskLink").value = "";
+            document.getElementById("taskLimit").value = "";
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                document.getElementById("adminContent").style.display = "block";
+                loadData();
+            } else {
+                document.getElementById("adminLock").style.display = "block";
+            }
+        });
+
+        function loadData() {
+            // Load Active Tasks
+            onValue(ref(db, 'activeTasks'), (snap) => {
+                const table = document.getElementById("activeTasksTable");
+                table.innerHTML = "";
+                snap.forEach((child) => {
+                    const data = child.val();
+                    table.innerHTML += `<tr>
+                        <td><b>${data.title}</b><br>₦${data.reward}</td>
+                        <td>${data.completed} / ${data.limit}</td>
+                        <td><button class="btn btn-reject" onclick="deleteTask('${child.key}')">Delete</button></td>
+                    </tr>`;
+                });
+            });
+
+            onValue(ref(db, 'users'), (snap) => {
+                const table = document.getElementById("userTable");
+                document.getElementById("statUsers").innerText = snap.size || 0;
+                table.innerHTML = "";
+                snap.forEach((child) => {
+                    const data = child.val();
+                    const date = data.joinedAt ? new Date(data.joinedAt).toLocaleDateString() : "Member";
+                    table.innerHTML += `<tr><td>${data.email}</td><td>${date}</td></tr>`;
+                });
+            });
+
+            onValue(ref(db, 'proofs'), (snap) => {
+                const table = document.getElementById("proofTable");
+                document.getElementById("statProofs").innerText = snap.size || 0;
+                table.innerHTML = "";
+                snap.forEach((child) => {
+                    const data = child.val();
+                    table.innerHTML += `<tr><td>${data.userEmail}</td><td><b>${data.taskName}</b><br>₦${data.reward}</td>
+                    <td><a href="${data.proofLink}" target="_blank" style="color:#38bdf8;">View</a></td>
+                    <td><button class="btn btn-approve" onclick="approveTask('${child.key}','${data.userId}',${data.reward},'${data.taskId}')">Approve</button>
+                    <button class="btn btn-reject" onclick="rejectTask('${child.key}')">Reject</button></td></tr>`;
+                });
+            });
+
+            onValue(ref(db, 'withdrawals'), (snap) => {
+                const table = document.getElementById("withdrawTable");
+                let count = 0; table.innerHTML = "";
+                snap.forEach((child) => {
+                    const data = child.val();
+                    if(data.status === "pending"){
+                        count++;
+                        table.innerHTML += `<tr><td>${data.userEmail}</td><td>${data.bank}<br><b>${data.acc}</b></td>
+                        <td style="color:#ef4444; font-weight:800;">₦${data.amount.toLocaleString()}</td>
+                        <td><button class="btn btn-paid" onclick="markPaid('${child.key}','${data.userId}','${data.type}',${data.amount})">Mark Paid</button></td></tr>`;
+                    }
+                });
+                document.getElementById("statWithdraws").innerText = count;
+            });
+        }
+
+        // --- UPDATED: APPROVE LOGIC (Marks as completed for user to hide it) ---
+        window.approveTask = async (pid, uid, r, taskId) => {
+            // 1. Pay user
+            await runTransaction(ref(db, `users/${uid}/taskBalance`), (c) => (c || 0) + r);
+            
+            // 2. Hide from user by adding to their personal completed list
+            if(taskId) {
+                await set(ref(db, `users/${uid}/completedTasks/${taskId}`), true);
+                // Also update global counter
+                await runTransaction(ref(db, `activeTasks/${taskId}/completed`), (c) => (c || 0) + 1);
+            }
+
+            // 3. Delete proof
+            await remove(ref(db, `proofs/${pid}`));
+            showToast("Approved & Hidden for User", "#22c55e");
+        };
+
+        window.deleteTask = async (id) => {
+            if(confirm("Permanently delete this task for all users?")) {
+                await remove(ref(db, `activeTasks/${id}`));
+                showToast("Task Deleted", "#ef4444");
+            }
+        };
+
+        window.rejectTask = async (id) => {
+            await remove(ref(db, `proofs/${id}`));
+            showToast("Proof Rejected", "#ef4444");
+        };
+
+        window.markPaid = async (withdrawId, userId, type, amount) => {
+            const balKey = (type === "Task Balance") ? "taskBalance" : "refBalance";
+            await runTransaction(ref(db, `users/${userId}/${balKey}`), (curr) => (curr || 0) - amount);
+            await remove(ref(db, `withdrawals/${withdrawId}`));
+            showToast("Payout Confirmed", "#4f46e5");
+        };
+
+        document.getElementById("adminLogout").onclick = () => signOut(auth).then(() => window.location.href="login.html");
+    </script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amplyfi | Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    /* --- DARK PREMIUM THEME CSS --- */
+    * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;}
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('pictures/Gemini_Generated_Image_kclkalkclkalkclk.png') no-repeat center center/cover;
+      position: relative;
+      color: #fff;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 100%; height: 100%;
+      background: rgba(17, 24, 39, 0.85); /* Dark overlay */
+      backdrop-filter: blur(10px);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 400px;
+      max-width: 95%;
+      padding: 45px 35px;
+      border-radius: 24px;
+      background: #1f2937;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(79, 70, 229, 0.3);
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      background: linear-gradient(to right, #4f46e5, #9333ea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 35px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Form fields */
+    .field {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    label {
+      font-size: 11px;
+      margin-bottom: 8px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    input {
+      padding: 14px 16px;
+      font-size: 15px;
+      border-radius: 12px;
+      border: 1px solid #374151;
+      background: #111827;
+      color: #fff;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 12px rgba(79, 70, 229, 0.2);
+    }
+
+    /* Button */
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(to right, #4f46e5, #9333ea);
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    /* Switch link */
+    .switch {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    .switch span {
+      cursor: pointer;
+      color: #4f46e5;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .switch span:hover { text-decoration: underline; }
+
+    /* Error messages */
+    .error {
+      font-size: 12px;
+      color: #f87171;
+      margin-top: 6px;
+      min-height: 15px;
+    }
+
+    .timer {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    #resendBtn {
+      display: none;
+      cursor: pointer;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Amplyfi</h2>
+    <p class="subtitle">Welcome Back</p>
+    
+    <form id="loginForm">
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+        <div class="error" id="emailError"></div>
+      </div>
+      
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required>
+        <div class="error" id="passwordError"></div>
+      </div>
+      
+      <button type="submit">Login to Dashboard</button>
+      
+      <div class="timer">
+        <span id="countdown">Verification email sent. Resend in 60s</span>
+        <span id="resendBtn">Resend Email</span>
+      </div>
+    </form>
+    
+    <div class="switch">Don't have an account? <span onclick="location.href='index.html'">Sign Up</span></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    // Your Firebase Config remains unchanged
+    const firebaseConfig = {
+      apiKey: "AIzaSyAP5BADrbyPaeR8WYVzZToWabxeVBDTo5I",
+      authDomain: "client-b83b3.firebaseapp.com",
+      projectId: "client-b83b3",
+      storageBucket: "client-b83b3.firebasestorage.app",
+      messagingSenderId: "653007015347",
+      appId: "1:653007015347:web:7a43260aab8bc2246f4fc6",
+      measurementId: "G-HK03EL3GB6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("loginEmail").focus();
+
+    // Timer logic
+    let time = 60, timer;
+    const countdown = document.getElementById("countdown");
+    const resendBtn = document.getElementById("resendBtn");
+    countdown.style.display = "none";
+
+    function startTimer() {
+      time = 60;
+      countdown.style.display = "inline";
+      resendBtn.style.display = "none";
+      clearInterval(timer);
+      timer = setInterval(() => {
+        time--;
+        countdown.innerText = "Resend available in " + time + "s";
+        if (time <= 0) {
+          clearInterval(timer);
+          countdown.style.display = "none";
+          resendBtn.style.display = "inline";
+        }
+      }, 1000);
+    }
+
+    // Login logic
+    document.getElementById("loginForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      document.getElementById("emailError").textContent = "";
+      document.getElementById("passwordError").textContent = "";
+
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (user.emailVerified) {
+          window.location.href = "dashboard.html"; 
+        } else {
+          document.getElementById("emailError").innerHTML = `
+            Please verify your email. <span id="resend" style="cursor:pointer;color:#4f46e5;font-weight:600;">Resend?</span>
+          `;
+          document.getElementById("resend").addEventListener("click", () => {
+            sendEmailVerification(user).then(() => { startTimer(); })
+              .catch(() => { document.getElementById("emailError").textContent = "Too many attempts."; });
+          });
+        }
+      } catch (error) {
+        switch (error.code) {
+          case "auth/user-not-found": document.getElementById("emailError").textContent = "Account not found."; break;
+          case "auth/wrong-password": document.getElementById("passwordError").textContent = "Incorrect password."; break;
+          default: document.getElementById("emailError").textContent = "Login failed. Check details."; break;
+        }
+      }
+    });
+
+    onAuthStateChanged(auth, user => {
+      if (user && !user.emailVerified) startTimer();
+    });
+  </script>
+</body>
+</html>
