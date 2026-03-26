@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplyfi | Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  /* --- DARK PREMIUM THEME CSS --- */
+  * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+  body {
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    /* Background set to fixed so it doesn't move when scrolling */
+    background:url('pictures/Gemini_Generated_Image_kclkalkclkalkclk.png') no-repeat center center fixed;
+    background-size: cover;
+    position:relative;
+    color: #fff;
+    padding: 40px 0; /* Space for mobile scrolling */
+    overflow-y: auto; /* ENABLED SCROLLING */
+  }
+
+  body::before {
+    content:"";
+    position:fixed; /* Changed to fixed so the blur covers everything during scroll */
+    top: 0; left: 0;
+    width:100%; height:100%;
+    background:rgba(17, 24, 39, 0.85); 
+    backdrop-filter:blur(8px);
+    z-index:0;
+  }
+
+  .container {
+    position:relative;
+    z-index:1;
+    width:400px;
+    max-width:95%;
+    padding:40px 30px;
+    border-radius:24px;
+    background:#1f2937;
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    overflow: hidden; /* Keeps the internal redirect overlay clipped to the box */
+    margin: auto; /* Ensures it centers properly during scroll */
+  }
+
+  h2 {
+    text-align:center;
+    font-size:32px;
+    font-weight:800;
+    margin-bottom: 5px;
+    background: linear-gradient(to right, #4f46e5, #9333ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #9ca3af;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+  }
+
+  .field {margin-bottom:15px; display:flex; flex-direction:column;}
+  label {font-size:11px; margin-bottom:6px; color:#9ca3af; text-transform: uppercase; letter-spacing: 1px;}
+  
+  input {
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #374151;
+    background: #111827;
+    outline:none;
+    font-size:14px;
+    color: #fff;
+    transition:0.3s;
+  }
+  input:focus { border-color:#4f46e5; box-shadow:0 0 10px rgba(79,70,229,0.2); }
+
+  .error { color:#f87171; font-size:11px; margin-top:4px; font-weight: 500; height: 14px; }
+
+  button {
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(to right, #4f46e5, #9333ea);
+    color:#fff;
+    font-weight:600;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+    margin-top:15px;
+  }
+  button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(79,70,229,0.4); }
+
+  .switch {text-align:center; margin-top:20px; font-size:14px; color:#9ca3af;}
+  .switch span {cursor:pointer; color:#4f46e5; font-weight: 600; text-decoration: none;}
+  .switch span:hover { text-decoration: underline; }
+
+  .timer {text-align:center; margin-top:15px; font-size:13px; color:#9ca3af;}
+  #resendBtn {display:none; cursor:pointer; color:#4f46e5; font-weight: 600;}
+
+  #referralCode { border-color: rgba(147, 51, 234, 0.5); color: #a78bfa; font-weight: 600; }
+
+  /* --- REDIRECT OVERLAY CSS --- */
+  #redirectOverlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(17, 24, 39, 0.98);
+    z-index: 10;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .circle-timer {
+    width: 70px;
+    height: 70px;
+    border: 4px solid rgba(79, 70, 229, 0.1);
+    border-top: 4px solid #4f46e5;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .timer-num { animation: none !important; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="redirectOverlay">
+    <div class="circle-timer"><span id="redirectNum" class="timer-num">3</span></div>
+    <p style="font-weight: 600; color: #fff;">Account Created!</p>
+    <p style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Check email then login...</p>
+  </div>
+
+  <h2>Amplyfi</h2>
+  <p class="subtitle">JOIN THE #1 ADS PLATFORM</p>
+  
+  <form id="signupForm">
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Choose a unique name" required>
+      <div class="error" id="usernameError"></div>
+    </div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="example@mail.com" required>
+      <div class="error" id="emailError"></div>
+    </div>
+    
+    <div class="field">
+      <label>Confirm Email</label>
+      <input type="email" id="confirmEmail" placeholder="Re-enter email" required>
+      <div class="error" id="confirmEmailError"></div>
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Min. 6 characters" required>
+      <div class="error" id="passwordError"></div>
+    </div>
+
+    <div class="field">
+      <label>Confirm Password</label>
+      <input type="password" id="confirmPassword" placeholder="Re-enter password" required>
+      <div class="error" id="confirmPasswordError"></div>
+    </div>
+
+    <div class="field">
+      <label>Referral Code (Auto-filled)</label>
+      <input type="text" id="referralCode" placeholder="None">
+    </div>
+
+    <button type="submit" id="mainSubmitBtn">Create Account</button>
+    
+    <div class="timer">
+      <span id="countdown">Resend email in 30s</span>
+      <span id="resendBtn">Resend Verification Email</span>
+    </div>
+  </form>
+  
+  <div class="switch">Already a member? <span onclick="location.href='login.html'">Login</span></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import { getDatabase, ref, set, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAP5BADrbyPaeR8WYVzZToWabxeVBDTo5I",
+    authDomain: "client-b83b3.firebaseapp.com",
+    projectId: "client-b83b3",
+    databaseURL: "https://client-b83b3-default-rtdb.firebaseio.com/",
+    appId: "1:653007015347:web:7a43260aab8bc2246f4fc6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  if (refCode) {
+    const rInput = document.getElementById('referralCode');
+    rInput.value = refCode;
+    rInput.readOnly = true;
+  }
+
+  let time = 30, timerInterval;
+  const countdown = document.getElementById("countdown");
+  const resendBtn = document.getElementById("resendBtn");
+  countdown.style.display = "none";
+
+  function startResendTimer() {
+    time = 30;
+    countdown.style.display = "inline";
+    resendBtn.style.display = "none";
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      time--;
+      countdown.innerText = "Resend email in " + time + "s";
+      if(time <= 0) {
+        clearInterval(timerInterval);
+        countdown.style.display = "none";
+        resendBtn.style.display = "inline";
+      }
+    }, 1000);
+  }
+
+  document.getElementById("signupForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const btn = document.getElementById("mainSubmitBtn");
+    btn.disabled = true;
+    btn.innerText = "Checking...";
+
+    document.querySelectorAll(".error").forEach(div => div.textContent = "");
+
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const confirmEmail = document.getElementById("confirmEmail").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const referredBy = document.getElementById("referralCode").value.trim() || "none";
+
+    if(email !== confirmEmail) {
+      document.getElementById("confirmEmailError").textContent = "Emails do not match!";
+      btn.disabled = false; btn.innerText = "Create Account";
+      return;
+    }
+    if(password !== confirmPassword) {
+      document.getElementById("confirmPasswordError").textContent = "Passwords do not match!";
+      btn.disabled = false; btn.innerText = "Create Account";
+      return;
+    }
+
+    try {
+      const userQuery = query(ref(db, 'users'), orderByChild('username'), equalTo(username));
+      const snapshot = await get(userQuery);
+      if (snapshot.exists()) {
+        document.getElementById("usernameError").textContent = "Username already taken!";
+        btn.disabled = false; btn.innerText = "Create Account";
+        return;
+      }
+
+      btn.innerText = "Creating Account...";
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await set(ref(db, 'users/' + user.uid), {
+        username: username,
+        email: email,
+        taskBalance: 0,
+        refBalance: 0,
+        referredBy: referredBy,
+        joinedDate: Date.now()
+      });
+
+      await sendEmailVerification(user);
+      await signOut(auth);
+
+      document.getElementById("redirectOverlay").style.display = "flex";
+      let count = 3;
+      const countInterval = setInterval(() => {
+        count--;
+        document.getElementById("redirectNum").innerText = count;
+        if(count <= 0) {
+          clearInterval(countInterval);
+          window.location.href = "login.html";
+        }
+      }, 1000);
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerText = "Create Account";
+      document.getElementById("emailError").textContent = err.message;
+    }
+  });
+
+  resendBtn.onclick = async () => {
+    if(auth.currentUser) {
+      await sendEmailVerification(auth.currentUser);
+      startResendTimer();
+    }
+  };
+</script>
+</body>
+</html>
