@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amplyfi | Ultimate Admin Control</title>
+    <title>Amplyfi | Master Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -29,27 +29,37 @@
         .stat-card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 10px; }
         .stat-card p { font-size: 28px; font-weight: 800; color: #4f46e5; }
 
-        /* --- TABLES & INPUTS --- */
+        /* --- INPUTS & SEARCH --- */
+        .search-input { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; width: 100%; margin-bottom: 20px; outline: none; transition: 0.3s; font-size: 14px; }
+        .search-input:focus { border-color: #4f46e5; }
+
+        /* --- TABLES --- */
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 700px; }
         th { text-align: left; color: #64748b; padding: 15px; border-bottom: 1px solid #334155; font-size: 11px; text-transform: uppercase; }
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; vertical-align: middle; }
 
-        .search-input { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; width: 100%; margin-bottom: 20px; outline: none; transition: 0.3s; }
-        .search-input:focus { border-color: #4f46e5; }
+        /* --- BRAND ICONS --- */
+        .icon-whatsapp { color: #25D366; }
+        .icon-tiktok { color: #ff0050; }
+        .icon-facebook { color: #1877F2; }
+        .icon-youtube { color: #FF0000; }
+        .icon-instagram { color: #E4405F; }
+        .icon-x-twitter { color: #ffffff; }
+        .icon-globe { color: #4f46e5; }
 
+        /* --- BUTTONS --- */
         .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; font-size: 12px; }
         .btn-approve { background: #22c55e; color: white; }
         .btn-reject { background: #ef4444; color: white; }
         .btn-add { background: #4f46e5; color: white; }
 
         /* --- IMAGE MODAL --- */
-        .proof-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid #334155; transition: 0.2s; }
-        .proof-thumb:hover { border-color: #4f46e5; }
+        .proof-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid #334155; }
         .modal { display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; flex-direction: column; }
-        .modal-content { max-width: 90%; max-height: 80%; border-radius: 12px; }
+        .modal-content { max-width: 90%; max-height: 85%; border-radius: 12px; }
         
-        #toast { position: fixed; top: 20px; right: 20px; padding: 15px 25px; background: #1e293b; color: #fff; border-left: 4px solid #4f46e5; border-radius: 8px; display: none; z-index: 9999; font-weight: 600; }
+        #toast { position: fixed; top: 20px; right: 20px; padding: 15px 25px; background: #1e293b; color: #fff; border-left: 4px solid #4f46e5; border-radius: 8px; display: none; z-index: 9999; }
         #adminLock { width: 100%; text-align: center; padding-top: 150px; background: #0f172a; position: fixed; height: 100vh; z-index: 10000; }
     </style>
 </head>
@@ -59,40 +69,39 @@
 
     <div id="imgModal" class="modal" onclick="this.style.display='none'">
         <img id="modalImg" class="modal-content">
-        <p style="margin-top: 20px; color: #94a3b8; font-size: 14px;">Click anywhere to close</p>
+        <p style="margin-top: 20px; color: #94a3b8;">Click anywhere to close</p>
     </div>
 
     <div id="adminLock">
         <i class="fas fa-shield-alt" style="font-size: 60px; color: #ef4444; margin-bottom: 20px;"></i>
-        <h1>Admin Access Only</h1>
-        <p style="color:#64748b; margin-top:10px;">Login with an authorized email to continue.</p>
-        <button onclick="location.href='login.html'" class="btn btn-add" style="margin-top:20px; padding:12px 40px;">Back to Login</button>
+        <h1>Admin Control Panel</h1>
+        <button onclick="location.href='login.html'" class="btn btn-add" style="margin-top:20px; padding:12px 35px;">Authorize Account</button>
     </div>
 
     <nav class="sidebar" id="sidebarMenu" style="display: none;">
         <h1>Amplyfi</h1>
-        <div class="nav-item active" onclick="showSection('dashboard', this)"><i class="fas fa-chart-line"></i> Dashboard</div>
-        <div class="nav-item" onclick="showSection('tasks', this)"><i class="fas fa-plus-square"></i> Create Task</div>
-        <div class="nav-item" onclick="showSection('proofs', this)"><i class="fas fa-check-circle"></i> Verify Proofs</div>
+        <div class="nav-item active" onclick="showSection('dashboard', this)"><i class="fas fa-chart-pie"></i> Overview</div>
+        <div class="nav-item" onclick="showSection('tasks', this)"><i class="fas fa-plus-circle"></i> Create Task</div>
+        <div class="nav-item" onclick="showSection('proofs', this)"><i class="fas fa-check-double"></i> Verify Proofs</div>
         <div class="nav-item" onclick="showSection('withdrawals', this)"><i class="fas fa-wallet"></i> Payouts</div>
-        <div class="nav-item" onclick="showSection('users', this)"><i class="fas fa-users"></i> User List</div>
-        <div id="adminLogout" class="nav-item" style="color: #ef4444; margin-top: 50px;"><i class="fas fa-sign-out-alt"></i> Logout</div>
+        <div class="nav-item" onclick="showSection('users', this)"><i class="fas fa-users"></i> Manage Users</div>
+        <div id="adminLogout" class="nav-item" style="color: #ef4444; margin-top: 40px;"><i class="fas fa-power-off"></i> Logout</div>
     </nav>
 
     <main class="main-content" id="adminContent" style="display: none;">
         
         <section id="dashboard" class="section active">
-            <h2>System Overview</h2>
+            <h2>System Dashboard</h2>
             <div class="stats-grid">
-                <div class="stat-card"><h3>Users</h3><p id="statUsers">0</p></div>
+                <div class="stat-card"><h3>Total Users</h3><p id="statUsers">0</p></div>
                 <div class="stat-card"><h3>Pending Proofs</h3><p id="statProofs">0</p></div>
                 <div class="stat-card"><h3>Withdrawals</h3><p id="statWithdraws" style="color:#ef4444">0</p></div>
             </div>
             <div class="card">
-                <h3>Current Active Tasks</h3>
+                <h3>Live Tasks</h3>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>Task</th><th>Reward</th><th>Usage</th><th>Action</th></tr></thead>
+                        <thead><tr><th>Platform</th><th>Task Name</th><th>Payout</th><th>Slots</th><th>Action</th></tr></thead>
                         <tbody id="activeTasksTable"></tbody>
                     </table>
                 </div>
@@ -103,32 +112,39 @@
             <div class="card">
                 <h2>Publish New Task</h2>
                 <div style="display:grid; gap:15px; margin-top:20px;">
-                    <input type="text" id="taskTitle" class="search-input" style="margin:0" placeholder="Task Title (e.g. Follow on TikTok)">
-                    <input type="text" id="taskLink" class="search-input" style="margin:0" placeholder="URL (e.g. tiktok.com/@yourprofile)">
+                    <input type="text" id="taskTitle" class="search-input" style="margin:0" placeholder="Task Title (e.g. Follow on Instagram)">
+                    <input type="text" id="taskLink" class="search-input" style="margin:0" placeholder="URL Link">
                     <div style="display:flex; gap:15px;">
-                        <input type="number" id="taskReward" class="search-input" style="margin:0" placeholder="Reward (₦)">
-                        <input type="number" id="taskLimit" class="search-input" style="margin:0" placeholder="Total Slots">
+                        <select id="taskPlatform" class="search-input" style="margin:0; flex:2;">
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="x-twitter">X (Twitter)</option>
+                            <option value="globe">Other / Website</option>
+                        </select>
+                        <input type="number" id="taskReward" class="search-input" style="margin:0; flex:1;" placeholder="₦ Reward">
+                        <input type="number" id="taskLimit" class="search-input" style="margin:0; flex:1;" placeholder="Max Slots">
                     </div>
-                    <button class="btn btn-add" style="padding:15px;" id="addTaskBtn">Create & Go Live</button>
+                    <button class="btn btn-add" style="padding:15px;" id="addTaskBtn">Publish Task with Icon</button>
                 </div>
             </div>
         </section>
 
         <section id="proofs" class="section">
             <div class="card">
-                <h2>Proof Verification</h2>
-                <input type="text" id="proofSearch" class="search-input" placeholder="🔍 Search proofs by user email..." onkeyup="filterTable('proofTable', 1, 'proofSearch')">
-                
-                <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <h2>Verify Proofs</h2>
+                <input type="text" id="proofSearch" class="search-input" placeholder="🔍 Search user email..." onkeyup="filterTable('proofTable', 1, 'proofSearch')">
+                <div style="margin-bottom: 15px; display: flex; gap: 10px;">
                     <button class="btn btn-approve" onclick="bulkApprove()">Approve Selected</button>
-                    <button class="btn btn-reject" onclick="bulkReject()">Delete Selected</button>
+                    <button class="btn btn-reject" onclick="bulkReject()">Reject Selected</button>
                 </div>
-
                 <div class="table-container">
                     <table>
                         <thead><tr>
-                            <th><input type="checkbox" id="masterCheck" onclick="toggleAll(this)"></th>
-                            <th>User</th><th>Task</th><th>Image</th><th>Action</th>
+                            <th><input type="checkbox" onclick="toggleAll(this)"></th>
+                            <th>User</th><th>Task Name</th><th>Screenshot</th><th>Action</th>
                         </tr></thead>
                         <tbody id="proofTable"></tbody>
                     </table>
@@ -141,7 +157,7 @@
                 <h2>Pending Payouts</h2>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>User</th><th>Bank Info</th><th>Amount</th><th>Action</th></tr></thead>
+                        <thead><tr><th>User</th><th>Bank Details</th><th>Amount</th><th>Action</th></tr></thead>
                         <tbody id="withdrawTable"></tbody>
                     </table>
                 </div>
@@ -150,17 +166,16 @@
 
         <section id="users" class="section">
             <div class="card">
-                <h2>Manage Users</h2>
+                <h2>User Management</h2>
                 <input type="text" id="userSearch" class="search-input" placeholder="🔍 Find user by email..." onkeyup="filterTable('userTable', 0, 'userSearch')">
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>Email</th><th>Balance</th><th>Joined</th><th>Action</th></tr></thead>
+                        <thead><tr><th>Email</th><th>Total Balance</th><th>Joined</th><th>Action</th></tr></thead>
                         <tbody id="userTable"></tbody>
                     </table>
                 </div>
             </div>
         </section>
-
     </main>
 
     <script type="module">
@@ -181,6 +196,11 @@
         const db = getDatabase(app);
         const ADMIN_EMAIL = "kanuchinwendujones07@gmail.com";
 
+        const platformIcons = {
+            'whatsapp': 'fab fa-whatsapp', 'tiktok': 'fab fa-tiktok', 'facebook': 'fab fa-facebook',
+            'youtube': 'fab fa-youtube', 'instagram': 'fab fa-instagram', 'x-twitter': 'fab fa-x-twitter', 'globe': 'fas fa-globe'
+        };
+
         // --- NAVIGATION ---
         window.showSection = (id, el) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -189,7 +209,6 @@
             el.classList.add('active');
         };
 
-        // --- SEARCH LOGIC ---
         window.filterTable = (tableId, colIndex, inputId) => {
             const input = document.getElementById(inputId).value.toLowerCase();
             const rows = document.querySelectorAll(`#${tableId} tr`);
@@ -199,13 +218,12 @@
             });
         };
 
-        function showToast(m, color="#4f46e5") {
+        function showToast(m, c="#4f46e5") {
             const t = document.getElementById("toast");
-            t.innerText = m; t.style.borderLeftColor = color; t.style.display = "block";
+            t.innerText = m; t.style.borderLeftColor = c; t.style.display = "block";
             setTimeout(() => t.style.display = "none", 3000);
         }
 
-        // --- AUTH & DATA ---
         onAuthStateChanged(auth, (user) => {
             if (user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                 document.getElementById("adminLock").style.display = "none";
@@ -216,18 +234,22 @@
         });
 
         function loadData() {
-            // Task Stats & Table
+            // Dashboard & Tasks
             onValue(ref(db, 'activeTasks'), (snap) => {
                 const table = document.getElementById("activeTasksTable");
                 table.innerHTML = "";
                 snap.forEach(child => {
                     const d = child.val();
-                    table.innerHTML += `<tr><td>${d.title}</td><td>₦${d.reward}</td><td>${d.completed}/${d.limit}</td>
-                    <td><button class="btn btn-reject" onclick="deleteTask('${child.key}')">Remove</button></td></tr>`;
+                    const icon = platformIcons[d.platform] || 'fas fa-tasks';
+                    table.innerHTML += `<tr>
+                        <td><i class="${icon} icon-${d.platform}" style="font-size:18px"></i></td>
+                        <td>${d.title}</td><td>₦${d.reward}</td><td>${d.completed}/${d.limit}</td>
+                        <td><button class="btn btn-reject" onclick="deleteTask('${child.key}')">Del</button></td>
+                    </tr>`;
                 });
             });
 
-            // Proofs with Bulk Info
+            // Proof Verification
             onValue(ref(db, 'proofs'), (snap) => {
                 const table = document.getElementById("proofTable");
                 document.getElementById("statProofs").innerText = snap.size || 0;
@@ -239,12 +261,12 @@
                         <td><input type="checkbox" class="proof-check" data-info='${info}'></td>
                         <td>${d.userEmail}</td><td>${d.taskName}</td>
                         <td><img src="${d.proofLink}" class="proof-thumb" onclick="openImage('${d.proofLink}')"></td>
-                        <td><button class="btn btn-approve" onclick="approveTask('${child.key}','${d.userId}',${d.reward},'${d.taskId}')">Approve</button></td>
+                        <td><button class="btn btn-approve" onclick="approveTask('${child.key}','${d.userId}',${d.reward},'${d.taskId}')">Verify</button></td>
                     </tr>`;
                 });
             });
 
-            // Users List
+            // User Management
             onValue(ref(db, 'users'), (snap) => {
                 const table = document.getElementById("userTable");
                 document.getElementById("statUsers").innerText = snap.size || 0;
@@ -266,8 +288,8 @@
                     if(d.status === "pending"){
                         count++;
                         table.innerHTML += `<tr><td>${d.userEmail}</td><td>${d.bank}<br><b>${d.acc}</b></td>
-                        <td style="color:#ef4444;">₦${d.amount}</td>
-                        <td><button class="btn btn-approve" onclick="markPaid('${child.key}','${d.userId}','${d.type}',${d.amount})">Mark Paid</button></td></tr>`;
+                        <td style="color:#ef4444; font-weight:bold;">₦${d.amount}</td>
+                        <td><button class="btn btn-add" onclick="markPaid('${child.key}','${d.userId}','${d.type}',${d.amount})">Paid</button></td></tr>`;
                     }
                 });
                 document.getElementById("statWithdraws").innerText = count;
@@ -289,37 +311,37 @@
                 await runTransaction(ref(db, `users/${uid}/taskBalance`), (c) => (c || 0) + r);
                 if(taskId) await set(ref(db, `users/${uid}/completedTasks/${taskId}`), true);
                 await remove(ref(db, `proofs/${pid}`));
-                if(!silent) showToast("Proof Approved!");
+                if(!silent) showToast("Task Approved!");
             } catch(e) { console.error(e); }
         };
 
         window.bulkApprove = async () => {
             const selected = document.querySelectorAll('.proof-check:checked');
-            if(confirm(`Approve ${selected.length} tasks?`)) {
+            if(selected.length > 0 && confirm(`Approve ${selected.length} tasks?`)) {
                 for(let cb of selected) {
                     const d = JSON.parse(cb.getAttribute('data-info'));
                     await window.approveTask(d.pid, d.uid, d.reward, d.taskId, true);
                 }
-                showToast("Bulk Payout Finished!");
+                showToast("Bulk Process Complete!");
             }
         };
 
         window.banUser = async (uid) => {
-            if(confirm("Ban this user and clear their data?")) {
+            if(confirm("Ban user? All data will be wiped.")) {
                 await remove(ref(db, `users/${uid}`));
                 showToast("User Banned", "#ef4444");
             }
         };
 
         window.deleteTask = async (id) => {
-            if(confirm("Delete this task?")) await remove(ref(db, `activeTasks/${id}`));
+            if(confirm("Delete task?")) await remove(ref(db, `activeTasks/${id}`));
         };
 
         window.markPaid = async (wid, uid, type, amt) => {
             const key = (type === "Tasks") ? "taskBalance" : "refBalance";
             await runTransaction(ref(db, `users/${uid}/${key}`), (c) => (c || 0) - amt);
             await remove(ref(db, `withdrawals/${wid}`));
-            showToast("Withdrawal Completed");
+            showToast("Payout confirmed");
         };
 
         document.getElementById("addTaskBtn").onclick = async () => {
@@ -330,9 +352,10 @@
                 reward: parseInt(document.getElementById("taskReward").value),
                 link: link,
                 limit: parseInt(document.getElementById("taskLimit").value),
+                platform: document.getElementById("taskPlatform").value,
                 completed: 0, timestamp: Date.now()
             });
-            showToast("Task is now Live!");
+            showToast("Task Published Successfully!");
             document.getElementById("taskTitle").value = "";
             document.getElementById("taskLink").value = "";
         };
