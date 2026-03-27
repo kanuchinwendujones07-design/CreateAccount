@@ -3,115 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amplyfi | Earn Money</title>
+    <title>Amplyfi | Admin Control</title>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-        body{background:#0f172a; color:#fff; padding: 20px; padding-bottom: 80px;}
-
-        h2 { font-weight: 800; margin-bottom: 20px; font-size: 22px; color: #4f46e5; }
-
-        /* --- TASK CARD STYLING --- */
-        #taskContainer { display: grid; gap: 15px; }
+        body{background:#0f172a; color:#fff; min-height: 100vh; display: flex;}
         
-        .task-card {
-            background: #1e293b;
-            padding: 18px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-        .task-card:active { transform: scale(0.97); }
+        /* --- SIDEBAR --- */
+        .sidebar { width: 260px; background: #1e293b; border-right: 1px solid rgba(255,255,255,0.05); padding: 30px 20px; position: fixed; height: 100vh; z-index: 100; }
+        .sidebar h1 { font-weight: 800; color: #4f46e5; font-size: 24px; margin-bottom: 40px; text-align: center; }
+        .nav-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px; color: #94a3b8; cursor: pointer; transition: 0.3s; margin-bottom: 10px; font-weight: 600; }
+        .nav-item:hover, .nav-item.active { background: #4f46e5; color: white; }
 
-        /* ICON BOX */
-        .icon-box {
-            width: 55px;
-            height: 55px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
-        }
+        /* --- CONTENT --- */
+        .main-content { margin-left: 260px; flex: 1; padding: 40px; width: calc(100% - 260px); }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* OFFICIAL BRAND COLORS */
-        .brand-whatsapp { color: #25D366 !important; }
-        .brand-tiktok { color: #ff0050 !important; }
-        .brand-facebook { color: #1877F2 !important; }
-        .brand-youtube { color: #FF0000 !important; }
-        .brand-instagram { color: #E4405F !important; }
-        .brand-x-twitter { color: #ffffff !important; }
-        .brand-globe { color: #4f46e5 !important; }
+        .card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 30px; }
+        
+        /* --- BRAND COLORS FOR ADMIN TABLE --- */
+        .icon-whatsapp { color: #25D366 !important; }
+        .icon-tiktok { color: #ff0050 !important; }
+        .icon-facebook { color: #1877F2 !important; }
+        .icon-youtube { color: #FF0000 !important; }
+        .icon-instagram { color: #E4405F !important; }
+        .icon-x-twitter { color: #ffffff !important; }
 
-        .task-info { flex: 1; }
-        .task-info h4 { font-size: 15px; font-weight: 600; color: #f8fafc; margin-bottom: 4px; }
-        .task-info p { font-size: 13px; color: #94a3b8; font-weight: 500; }
+        /* --- FORMS & TABLES --- */
+        .search-input { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; width: 100%; margin-bottom: 20px; outline: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; color: #64748b; padding: 15px; border-bottom: 1px solid #334155; font-size: 11px; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; }
 
-        .reward-tag {
-            background: rgba(34, 197, 94, 0.1);
-            color: #22c55e;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-        }
+        .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; transition: 0.2s; font-size: 12px; }
+        .btn-approve { background: #22c55e; color: white; }
+        .btn-reject { background: #ef4444; color: white; }
+        .btn-add { background: #4f46e5; color: white; width: 100%; padding: 15px; margin-top: 10px; }
 
-        .btn-start {
-            background: #4f46e5;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        }
+        .proof-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #334155; }
+        
+        /* Modal for zooming */
+        .modal { display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
+        .modal img { max-width: 90%; max-height: 85%; border-radius: 10px; }
 
-        /* "HOT" BADGE FOR HIGH PAYING TASKS */
-        .badge-hot {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: #ef4444;
-            color: white;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 2px 10px;
-            border-bottom-left-radius: 10px;
-            text-transform: uppercase;
-        }
-
-        /* EMPTY STATE */
-        .empty-tasks { text-align: center; padding: 50px 20px; color: #64748b; }
-        .empty-tasks i { font-size: 40px; margin-bottom: 10px; display: block; }
+        #toast { position: fixed; top: 20px; right: 20px; padding: 15px 25px; background: #1e293b; color: #fff; border-left: 4px solid #4f46e5; border-radius: 8px; display: none; z-index: 9999; }
+        #adminLock { width: 100%; text-align: center; padding-top: 150px; background: #0f172a; position: fixed; height: 100vh; z-index: 10000; }
     </style>
 </head>
 <body>
 
-    <h2>Available Tasks</h2>
+    <div id="toast">Action Successful</div>
+    <div id="imgModal" class="modal" onclick="this.style.display='none'"><img id="modalImg"></div>
 
-    <div id="taskContainer">
-        <div class="empty-tasks">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Fetching new tasks...</p>
-        </div>
+    <div id="adminLock">
+        <h1>Admin Security</h1>
+        <button onclick="location.href='login.html'" class="btn btn-add" style="width:auto; padding:12px 40px;">Login</button>
     </div>
+
+    <nav class="sidebar" id="sidebarMenu" style="display: none;">
+        <h1>Amplyfi</h1>
+        <div class="nav-item active" onclick="showSection('dashboard', this)"><i class="fa-solid fa-gauge"></i> Overview</div>
+        <div class="nav-item" onclick="showSection('tasks', this)"><i class="fa-solid fa-plus-circle"></i> Create Task</div>
+        <div class="nav-item" onclick="showSection('proofs', this)"><i class="fa-solid fa-image"></i> Verify Proofs</div>
+        <div class="nav-item" onclick="showSection('users', this)"><i class="fa-solid fa-users-gear"></i> Manage Users</div>
+        <div id="adminLogout" class="nav-item" style="color: #ef4444; margin-top: 40px;"><i class="fa-solid fa-power-off"></i> Logout</div>
+    </nav>
+
+    <main class="main-content" id="adminContent" style="display: none;">
+        
+        <section id="dashboard" class="section active">
+            <h2>Live Tasks</h2>
+            <div class="card">
+                <table>
+                    <thead><tr><th>Platform</th><th>Task Name</th><th>Action</th></tr></thead>
+                    <tbody id="activeTasksTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tasks" class="section">
+            <div class="card">
+                <h2>Publish New Task</h2>
+                <div style="display:grid; gap:15px; margin-top:20px;">
+                    <input type="text" id="taskTitle" class="search-input" placeholder="Task Title">
+                    <input type="text" id="taskLink" class="search-input" placeholder="URL Link">
+                    
+                    <div style="display:flex; gap:10px;">
+                        <select id="taskPlatform" class="search-input" style="flex:2;">
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="x-twitter">X (Twitter)</option>
+                            <option value="globe">Generic Website</option>
+                        </select>
+                        <input type="number" id="taskReward" class="search-input" style="flex:1;" placeholder="₦ Payout">
+                        <input type="number" id="taskLimit" class="search-input" style="flex:1;" placeholder="Limit">
+                    </div>
+                    <button class="btn btn-add" id="addTaskBtn">Go Live</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="proofs" class="section">
+            <div class="card">
+                <h2>Verify Proofs</h2>
+                <input type="text" id="proofSearch" class="search-input" placeholder="🔍 Search email..." onkeyup="filterTable('proofTable', 1, 'proofSearch')">
+                <button class="btn btn-approve" onclick="bulkApprove()">Approve Selected</button>
+                <table>
+                    <thead><tr><th><input type="checkbox" onclick="toggleAll(this)"></th><th>User</th><th>Task</th><th>Image</th><th>Action</th></tr></thead>
+                    <tbody id="proofTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="users" class="section">
+            <div class="card">
+                <h2>User Management</h2>
+                <input type="text" id="userSearch" class="search-input" placeholder="🔍 Search user..." onkeyup="filterTable('userTable', 0, 'userSearch')">
+                <table>
+                    <thead><tr><th>Email</th><th>Balance</th><th>Action</th></tr></thead>
+                    <tbody id="userTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getDatabase, ref, onValue, remove, set, push, runTransaction } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAP5BADrbyPaeR8WYVzZToWabxeVBDTo5I",
@@ -122,78 +150,101 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
         const auth = getAuth(app);
+        const db = getDatabase(app);
+        const ADMIN_EMAIL = "kanuchinwendujones07@gmail.com";
 
-        // Map platform to FontAwesome class
-        const brandIcons = {
-            'whatsapp': 'fab fa-whatsapp',
-            'tiktok': 'fab fa-tiktok',
-            'facebook': 'fab fa-facebook',
-            'youtube': 'fab fa-youtube',
-            'instagram': 'fab fa-instagram',
-            'x-twitter': 'fab fa-x-twitter',
-            'globe': 'fas fa-globe'
+        const icons = {
+            'whatsapp': 'fa-brands fa-whatsapp', 'tiktok': 'fa-brands fa-tiktok', 'facebook': 'fa-brands fa-facebook',
+            'youtube': 'fa-brands fa-youtube', 'instagram': 'fa-brands fa-instagram', 'x-twitter': 'fa-brands fa-x-twitter', 'globe': 'fa-solid fa-globe'
+        };
+
+        window.showSection = (id, el) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+        };
+
+        window.filterTable = (tid, col, sid) => {
+            const v = document.getElementById(sid).value.toLowerCase();
+            document.querySelectorAll(`#${tid} tr`).forEach(r => r.style.display = r.cells[col].innerText.toLowerCase().includes(v) ? "" : "none");
         };
 
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loadUserTasks(user.uid);
-            } else {
-                window.location.href = "login.html";
+            if (user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                document.getElementById("adminLock").style.display = "none";
+                document.getElementById("sidebarMenu").style.display = "block";
+                document.getElementById("adminContent").style.display = "block";
+                loadData();
             }
         });
 
-        function loadUserTasks(uid) {
-            const taskRef = ref(db, 'activeTasks');
-            const userCompletedRef = ref(db, `users/${uid}/completedTasks`);
+        function loadData() {
+            onValue(ref(db, 'activeTasks'), (snap) => {
+                const table = document.getElementById("activeTasksTable");
+                table.innerHTML = "";
+                snap.forEach(child => {
+                    const d = child.val();
+                    const iconClass = icons[d.platform] || 'fa-solid fa-star';
+                    table.innerHTML += `<tr>
+                        <td><i class="${iconClass} icon-${d.platform}" style="font-size:20px"></i></td>
+                        <td>${d.title}</td>
+                        <td><button class="btn btn-reject" onclick="deleteTask('${child.key}')">Del</button></td>
+                    </tr>`;
+                });
+            });
 
-            // Fetch completed tasks first to hide them
-            onValue(userCompletedRef, (completedSnap) => {
-                const completedTasks = completedSnap.val() || {};
+            onValue(ref(db, 'proofs'), (snap) => {
+                const table = document.getElementById("proofTable");
+                table.innerHTML = "";
+                snap.forEach(child => {
+                    const d = child.val();
+                    const info = JSON.stringify({pid: child.key, uid: d.userId, reward: d.reward, taskId: d.taskId});
+                    table.innerHTML += `<tr>
+                        <td><input type="checkbox" class="proof-check" data-info='${info}'></td>
+                        <td>${d.userEmail}</td><td>${d.taskName}</td>
+                        <td><img src="${d.proofLink}" class="proof-thumb" onclick="openImage('${d.proofLink}')"></td>
+                        <td><button class="btn btn-approve" onclick="approveTask('${child.key}','${d.userId}',${d.reward})">Verify</button></td>
+                    </tr>`;
+                });
+            });
 
-                onValue(taskRef, (taskSnap) => {
-                    const container = document.getElementById('taskContainer');
-                    container.innerHTML = "";
-                    let hasTasks = false;
-
-                    taskSnap.forEach((child) => {
-                        const data = child.val();
-                        const taskId = child.key;
-
-                        // Skip if user already finished this task OR slots are full
-                        if (completedTasks[taskId] || data.completed >= data.limit) return;
-
-                        hasTasks = true;
-                        const iconClass = brandIcons[data.platform] || 'fas fa-tasks';
-                        const colorClass = `brand-${data.platform}`;
-                        
-                        // Add "Hot" badge if reward > 50
-                        const hotBadge = data.reward > 50 ? `<div class="badge-hot">Hot</div>` : '';
-
-                        container.innerHTML += `
-                            <div class="task-card">
-                                ${hotBadge}
-                                <div class="icon-box">
-                                    <i class="${iconClass} ${colorClass}"></i>
-                                </div>
-                                <div class="task-info">
-                                    <h4>${data.title}</h4>
-                                    <p class="reward-tag">₦${data.reward}</p>
-                                </div>
-                                <button class="btn-start" onclick="window.location.href='submit-proof.html?id=${taskId}&name=${encodeURIComponent(data.title)}&reward=${data.reward}&link=${encodeURIComponent(data.link)}'">
-                                    Start
-                                </button>
-                            </div>
-                        `;
-                    });
-
-                    if (!hasTasks) {
-                        container.innerHTML = `<div class="empty-tasks"><i class="fas fa-check-circle"></i><p>All tasks completed! Check back later.</p></div>`;
-                    }
+            onValue(ref(db, 'users'), (snap) => {
+                const table = document.getElementById("userTable");
+                table.innerHTML = "";
+                snap.forEach(child => {
+                    const d = child.val();
+                    table.innerHTML += `<tr><td>${d.email}</td><td>₦${(d.taskBalance || 0)}</td>
+                    <td><button class="btn btn-reject" onclick="banUser('${child.key}')">Ban</button></td></tr>`;
                 });
             });
         }
+
+        window.openImage = (url) => {
+            document.getElementById('modalImg').src = url;
+            document.getElementById('imgModal').style.display = 'flex';
+        };
+
+        document.getElementById("addTaskBtn").onclick = async () => {
+            await push(ref(db, 'activeTasks'), {
+                title: document.getElementById("taskTitle").value,
+                reward: parseInt(document.getElementById("taskReward").value),
+                link: document.getElementById("taskLink").value,
+                platform: document.getElementById("taskPlatform").value,
+                completed: 0, limit: parseInt(document.getElementById("taskLimit").value)
+            });
+            alert("Published!");
+        };
+
+        window.deleteTask = async (id) => { if(confirm("Delete?")) await remove(ref(db, `activeTasks/${id}`)); };
+        window.banUser = async (id) => { if(confirm("Ban?")) await remove(ref(db, `users/${id}`)); };
+        window.approveTask = async (pid, uid, r) => {
+            await runTransaction(ref(db, `users/${uid}/taskBalance`), c => (c || 0) + r);
+            await remove(ref(db, `proofs/${pid}`));
+        };
+        
+        document.getElementById("adminLogout").onclick = () => signOut(auth).then(() => location.href="login.html");
     </script>
 </body>
 </html>
