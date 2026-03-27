@@ -10,7 +10,7 @@
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
         body{background:#0f172a; color:#fff; min-height: 100vh; display: flex; overflow-x: hidden;}
         
-        /* --- SIDEBAR & NAVIGATION --- */
+        /* --- SIDEBAR --- */
         .sidebar { 
             width: 260px; background: #1e293b; border-right: 1px solid rgba(255,255,255,0.05); 
             padding: 30px 20px; position: fixed; height: 100vh; z-index: 2000; 
@@ -47,33 +47,33 @@
         th { text-align: left; color: #64748b; padding: 15px; border-bottom: 1px solid #334155; font-size: 11px; text-transform: uppercase; }
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; vertical-align: middle; }
 
-        .search-input { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; width: 100%; margin-bottom: 20px; outline: none; }
+        .search-input { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; width: 100%; margin-bottom: 20px; outline: none; transition: 0.3s; }
+        .search-input:focus { border-color: #4f46e5; }
 
-        .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; }
+        .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; font-size: 12px; }
         .btn-approve { background: #22c55e; color: white; }
         .btn-reject { background: #ef4444; color: white; }
-        .btn-add { background: #4f46e5; color: white; }
+        .btn-add { background: #4f46e5; color: white; width: 100%; padding: 15px; }
 
-        /* --- RESPONSIVE BREAKPOINT --- */
+        /* --- MODAL & TOAST --- */
+        .proof-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid #334155; }
+        .modal { display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; flex-direction: column; }
+        .modal-content { max-width: 90%; max-height: 80%; border-radius: 12px; }
+        #toast { position: fixed; top: 20px; right: 20px; padding: 15px 25px; background: #1e293b; color: #fff; border-left: 4px solid #4f46e5; border-radius: 8px; display: none; z-index: 9999; font-weight: 600; }
+        #adminLock { width: 100%; text-align: center; padding-top: 150px; background: #0f172a; position: fixed; height: 100vh; z-index: 10000; }
+
+        /* --- MOBILE RESPONSIVE --- */
         @media (max-width: 992px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; width: 100%; padding: 80px 20px 40px; }
             .mobile-nav { display: flex; }
             
-            /* Responsive Table (Stacking) */
             thead { display: none; }
-            tr { display: block; background: rgba(15, 23, 42, 0.5); border-radius: 15px; margin-bottom: 15px; padding: 10px; }
-            td { display: flex; justify-content: space-between; align-items: center; border: none; text-align: right; padding: 8px 10px; }
-            td::before { content: attr(data-label); font-weight: 600; color: #64748b; font-size: 10px; text-transform: uppercase; margin-right: 15px; }
-            .proof-thumb { width: 40px; height: 40px; }
+            tr { display: block; background: rgba(30, 41, 59, 0.5); border-radius: 15px; margin-bottom: 15px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); }
+            td { display: flex; justify-content: space-between; align-items: center; border: none; padding: 8px 10px; text-align: right; }
+            td::before { content: attr(data-label); font-weight: 600; color: #64748b; font-size: 10px; text-transform: uppercase; }
         }
-
-        /* --- MODALS --- */
-        .modal { display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; flex-direction: column; }
-        .modal-content { max-width: 90%; max-height: 80%; border-radius: 12px; }
-        #toast { position: fixed; top: 20px; right: 20px; padding: 15px 25px; background: #1e293b; color: #fff; border-left: 4px solid #4f46e5; border-radius: 8px; display: none; z-index: 9999; }
-        #adminLock { width: 100%; text-align: center; padding: 100px 20px; background: #0f172a; position: fixed; height: 100vh; z-index: 10000; }
     </style>
 </head>
 <body>
@@ -94,24 +94,23 @@
     <div id="adminLock">
         <i class="fas fa-shield-alt" style="font-size: 60px; color: #ef4444; margin-bottom: 20px;"></i>
         <h1>Admin Access Only</h1>
-        <button onclick="location.href='login.html'" class="btn btn-add" style="margin-top:20px;">Back to Login</button>
+        <button onclick="location.href='login.html'" class="btn btn-add" style="margin-top:20px; width: auto; padding: 12px 40px;">Back to Login</button>
     </div>
 
     <nav class="sidebar" id="sidebarMenu">
-        <div id="closeMenu" style="position: absolute; right: 20px; top: 20px; font-size: 20px; cursor: pointer; display: none;" class="mobile-only">&times;</div>
         <h1>Amplyfi</h1>
         <div class="nav-item active" onclick="navTo('dashboard', this)"><i class="fas fa-chart-line"></i> Dashboard</div>
         <div class="nav-item" onclick="navTo('tasks', this)"><i class="fas fa-plus-square"></i> Create Task</div>
         <div class="nav-item" onclick="navTo('proofs', this)"><i class="fas fa-check-circle"></i> Verify Proofs</div>
         <div class="nav-item" onclick="navTo('withdrawals', this)"><i class="fas fa-wallet"></i> Payouts</div>
         <div class="nav-item" onclick="navTo('users', this)"><i class="fas fa-users"></i> User List</div>
-        <div id="adminLogout" class="nav-item" style="color: #ef4444; margin-top: 30px;"><i class="fas fa-sign-out-alt"></i> Logout</div>
+        <div id="adminLogout" class="nav-item" style="color: #ef4444; margin-top: 50px; cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</div>
     </nav>
 
     <main class="main-content" id="adminContent" style="display: none;">
         
         <section id="dashboard" class="section active">
-            <h2>Dashboard</h2>
+            <h2>System Overview</h2>
             <div class="stats-grid">
                 <div class="stat-card"><h3>Users</h3><p id="statUsers">0</p></div>
                 <div class="stat-card"><h3>Pending Proofs</h3><p id="statProofs">0</p></div>
@@ -130,12 +129,12 @@
 
         <section id="tasks" class="section">
             <div class="card">
-                <h2>New Task</h2>
+                <h2>Publish New Task</h2>
                 <div style="display:grid; gap:15px; margin-top:20px;">
-                    <input type="text" id="taskTitle" class="search-input" placeholder="Title">
-                    <input type="text" id="taskLink" class="search-input" placeholder="URL">
+                    <input type="text" id="taskTitle" class="search-input" placeholder="Task Title">
+                    <input type="text" id="taskLink" class="search-input" placeholder="URL Link">
                     <div style="display:flex; gap:15px;">
-                        <input type="number" id="taskReward" class="search-input" placeholder="₦ Reward">
+                        <input type="number" id="taskReward" class="search-input" placeholder="Reward (₦)">
                         <input type="number" id="taskLimit" class="search-input" placeholder="Limit">
                     </div>
                     <select id="taskPlatform" class="search-input">
@@ -146,22 +145,18 @@
                         <option value="fab fa-facebook">Facebook</option>
                         <option value="fas fa-globe">Other</option>
                     </select>
-                    <button class="btn btn-add" id="addTaskBtn">Go Live</button>
+                    <button class="btn btn-add" id="addTaskBtn">Create & Go Live</button>
                 </div>
             </div>
         </section>
 
         <section id="proofs" class="section">
             <div class="card">
-                <h2>Proofs</h2>
-                <input type="text" id="proofSearch" class="search-input" placeholder="Search Email..." onkeyup="filterTable('proofTable', 1, 'proofSearch')">
-                <div style="margin-bottom: 20px; display: flex; gap: 10px;">
-                    <button class="btn btn-approve" onclick="bulkApprove()">Approve Selected</button>
-                    <button class="btn btn-reject" onclick="bulkReject()">Delete</button>
-                </div>
+                <h2>Proof Verification</h2>
+                <input type="text" id="proofSearch" class="search-input" placeholder="Search by email..." onkeyup="filterTable('proofTable', 1, 'proofSearch')">
                 <div class="table-container">
                     <table>
-                        <thead><tr><th><input type="checkbox" onclick="toggleAll(this)"></th><th>User</th><th>Task</th><th>Image</th><th>Action</th></tr></thead>
+                        <thead><tr><th>User</th><th>Task</th><th>Image</th><th>Action</th></tr></thead>
                         <tbody id="proofTable"></tbody>
                     </table>
                 </div>
@@ -170,10 +165,10 @@
 
         <section id="withdrawals" class="section">
             <div class="card">
-                <h2>Payouts</h2>
+                <h2>Pending Payouts</h2>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>User</th><th>Bank</th><th>Amount</th><th>Action</th></tr></thead>
+                        <thead><tr><th>User</th><th>Bank Info</th><th>Amount</th><th>Action</th></tr></thead>
                         <tbody id="withdrawTable"></tbody>
                     </table>
                 </div>
@@ -182,8 +177,8 @@
 
         <section id="users" class="section">
             <div class="card">
-                <h2>Users</h2>
-                <input type="text" id="userSearch" class="search-input" placeholder="Find Email..." onkeyup="filterTable('userTable', 0, 'userSearch')">
+                <h2>User Management</h2>
+                <input type="text" id="userSearch" class="search-input" placeholder="Find user..." onkeyup="filterTable('userTable', 0, 'userSearch')">
                 <div class="table-container">
                     <table>
                         <thead><tr><th>Email</th><th>Balance</th><th>Joined</th><th>Action</th></tr></thead>
@@ -212,84 +207,104 @@
         const db = getDatabase(app);
         const ADMIN_EMAIL = "kanuchinwendujones07@gmail.com";
 
-        // Responsive Menu Logic
+        // UI Helpers
         const sidebar = document.getElementById('sidebarMenu');
         document.getElementById('openMenu').onclick = () => sidebar.classList.add('open');
-        document.getElementById('closeMenu').onclick = () => sidebar.classList.remove('open');
-
+        
         window.navTo = (id, el) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             el.classList.add('active');
-            sidebar.classList.remove('open'); // Auto-close on mobile
+            if(window.innerWidth < 992) sidebar.classList.remove('open');
         };
 
-        // Auth & Data loading
+        window.showToast = (m, color="#4f46e5") => {
+            const t = document.getElementById("toast");
+            t.innerText = m; t.style.borderLeftColor = color; t.style.display = "block";
+            setTimeout(() => t.style.display = "none", 3000);
+        };
+
+        // Auth Logic
         onAuthStateChanged(auth, (user) => {
             if (user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                 document.getElementById("adminLock").style.display = "none";
                 document.getElementById("mobileHeader").style.display = "flex";
                 document.getElementById("adminContent").style.display = "block";
-                document.getElementById("closeMenu").style.display = window.innerWidth < 992 ? "block" : "none";
                 loadData();
             }
         });
 
+        // Data Loading & Counters
         function loadData() {
             onValue(ref(db, 'activeTasks'), (snap) => {
                 const table = document.getElementById("activeTasksTable"); table.innerHTML = "";
                 snap.forEach(child => {
                     const d = child.val();
-                    table.innerHTML += `<tr><td data-label="Task">${d.title}</td><td data-label="Reward">₦${d.reward}</td><td data-label="Usage">${d.completed}/${d.limit}</td><td><button class="btn btn-reject" onclick="deleteTask('${child.key}')">Remove</button></td></tr>`;
+                    table.innerHTML += `<tr><td data-label="Task">${d.title}</td><td data-label="Reward">₦${d.reward}</td><td data-label="Usage">${d.completed || 0}/${d.limit}</td><td><button class="btn btn-reject" onclick="deleteTask('${child.key}')">Remove</button></td></tr>`;
                 });
             });
 
             onValue(ref(db, 'proofs'), (snap) => {
+                document.getElementById("statProofs").innerText = snap.size || 0;
                 const table = document.getElementById("proofTable"); table.innerHTML = "";
                 snap.forEach(child => {
                     const d = child.val();
-                    const info = JSON.stringify({pid: child.key, uid: d.userId, reward: d.reward, taskId: d.taskId});
-                    table.innerHTML += `<tr>
-                        <td><input type="checkbox" class="proof-check" data-info='${info}'></td>
-                        <td data-label="User">${d.userEmail}</td><td data-label="Task">${d.taskName}</td>
-                        <td data-label="Image"><img src="${d.proofLink}" class="proof-thumb" onclick="openImage('${d.proofLink}')"></td>
-                        <td><button class="btn btn-approve" onclick="approveTask('${child.key}','${d.userId}',${d.reward},'${d.taskId}')">Approve</button></td>
-                    </tr>`;
+                    table.innerHTML += `<tr><td data-label="User">${d.userEmail}</td><td data-label="Task">${d.taskName}</td><td data-label="Image"><img src="${d.proofLink}" class="proof-thumb" onclick="openImage('${d.proofLink}')"></td><td><button class="btn btn-approve" onclick="approveTask('${child.key}','${d.userId}',${d.reward},'${d.taskId}')">Approve</button></td></tr>`;
+                });
+            });
+
+            onValue(ref(db, 'users'), (snap) => {
+                document.getElementById("statUsers").innerText = snap.size || 0;
+                const table = document.getElementById("userTable"); table.innerHTML = "";
+                snap.forEach(child => {
+                    const d = child.val();
+                    const bal = (d.taskBalance || 0) + (d.refBalance || 0);
+                    table.innerHTML += `<tr><td data-label="Email">${d.email}</td><td data-label="Balance">₦${bal}</td><td data-label="Joined">${new Date(d.joinedAt).toLocaleDateString()}</td><td><button class="btn btn-reject" onclick="banUser('${child.key}')">Ban</button></td></tr>`;
                 });
             });
 
             onValue(ref(db, 'withdrawals'), (snap) => {
-                const table = document.getElementById("withdrawTable"); table.innerHTML = "";
+                let pCount = 0; const table = document.getElementById("withdrawTable"); table.innerHTML = "";
                 snap.forEach(child => {
                     const d = child.val();
                     if(d.status === "pending"){
-                        table.innerHTML += `<tr><td data-label="User">${d.userEmail}</td><td data-label="Bank">${d.bank} - ${d.acc}</td><td data-label="Amount" style="color:#ef4444;">₦${d.amount}</td><td><button class="btn btn-approve" onclick="markPaid('${child.key}','${d.userId}','${d.type}',${d.amount})">Paid</button></td></tr>`;
+                        pCount++;
+                        table.innerHTML += `<tr><td data-label="User">${d.userEmail}</td><td data-label="Bank">${d.bank}<br><b>${d.acc}</b></td><td data-label="Amount" style="color:#ef4444;">₦${d.amount}</td><td><button class="btn btn-approve" onclick="markPaid('${child.key}','${d.userId}','${d.type}',${d.amount})">Mark Paid</button></td></tr>`;
                     }
                 });
+                document.getElementById("statWithdraws").innerText = pCount;
             });
-            // ... (rest of your existing load logic here)
         }
 
-        // Global Utility Helpers
-        window.openImage = (url) => { document.getElementById('modalImg').src = url; document.getElementById('imgModal').style.display = 'flex'; };
-        window.showToast = (m) => { const t = document.getElementById("toast"); t.innerText = m; t.style.display = "block"; setTimeout(() => t.style.display = "none", 3000); };
+        // Functions
+        window.markPaid = async (wid, uid, type, amt) => {
+            if(!confirm(`Confirm payment of ₦${amt}?`)) return;
+            const path = (type === "Tasks") ? `users/${uid}/taskBalance` : `users/${uid}/refBalance`;
+            await runTransaction(ref(db, path), (c) => (c || 0) - amt);
+            await remove(ref(db, `withdrawals/${wid}`));
+            showToast("Paid!");
+        };
+
         window.approveTask = async (pid, uid, r, taskId) => {
             await runTransaction(ref(db, `users/${uid}/taskBalance`), (c) => (c || 0) + r);
             if(taskId) await set(ref(db, `users/${uid}/completedTasks/${taskId}`), true);
             await remove(ref(db, `proofs/${pid}`));
             showToast("Approved!");
         };
+
+        window.deleteTask = async (id) => { if(confirm("Delete?")) await remove(ref(db, `activeTasks/${id}`)); };
+        window.openImage = (url) => { document.getElementById('modalImg').src = url; document.getElementById('imgModal').style.display = 'flex'; };
         
         document.getElementById("addTaskBtn").onclick = async () => {
             const t = document.getElementById("taskTitle").value;
             const r = parseInt(document.getElementById("taskReward").value);
             const l = document.getElementById("taskLink").value;
-            if(!t || !r || !l) return showToast("Error!");
-            await push(ref(db, 'activeTasks'), { title: t, reward: r, link: l, limit: parseInt(document.getElementById("taskLimit").value), icon: document.getElementById("taskPlatform").value, completed: 0 });
-            showToast("Live!");
+            if(!t || !r || !l) return showToast("Fill all fields!", "#ef4444");
+            await push(ref(db, 'activeTasks'), { title: t, reward: r, link: l, limit: parseInt(document.getElementById("taskLimit").value) || 100, icon: document.getElementById("taskPlatform").value, completed: 0 });
+            showToast("Task Live!");
         };
-        
+
         document.getElementById("adminLogout").onclick = () => signOut(auth).then(() => location.href="login.html");
     </script>
 </body>
